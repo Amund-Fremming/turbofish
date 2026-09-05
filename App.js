@@ -1,7 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Platform, StyleSheet, Text, View } from 'react-native';
+import { matchPolicy, PrivacyPolicyPage } from './src/privacy-policy/renderer';
 
 export default function App() {
+  if (Platform.OS === 'web') {
+    const policy = matchPolicy(window.location.pathname);
+    if (policy) {
+      return <PrivacyPolicyPage policy={policy} />;
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.sign}>
