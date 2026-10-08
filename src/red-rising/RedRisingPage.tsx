@@ -3,6 +3,7 @@ import {
   Dimensions,
   Image,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -13,6 +14,7 @@ import {
 import characters from './characters.md';
 import { Markdown } from '../privacy-policy/Markdown';
 import { useTheme } from '../privacy-policy/useTheme';
+import { useDocumentBackground } from '../useDocumentBackground';
 
 const PORTRAITS: Record<string, { name: string; image: ImageSourcePropType }> = {
   adrius: { name: 'Adrius au Augustus', image: require('../../assets/red-rising/adrius_au_augustus.webp') },
@@ -45,6 +47,7 @@ const PALETTE = {
 export function RedRisingPage() {
   const { theme, toggle } = useTheme();
   const colors = PALETTE[theme];
+  useDocumentBackground(colors.background);
   const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
   const selectedPortrait = selectedCharacter ? PORTRAITS[selectedCharacter] : null;
   const imageHeight = Math.min(Dimensions.get('window').height * 0.56, 520);
@@ -121,7 +124,11 @@ export function RedRisingPage() {
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1 },
+  page: {
+    flex: 1,
+    paddingTop: Platform.OS === 'web' ? 'env(safe-area-inset-top)' : 0,
+    paddingBottom: Platform.OS === 'web' ? 'env(safe-area-inset-bottom)' : 0,
+  },
   topbar: {
     minHeight: 58,
     flexDirection: 'row',
