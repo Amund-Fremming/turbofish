@@ -62,8 +62,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
-    paddingTop: 12,
-    paddingBottom: 24,
+    paddingTop: Platform.OS === 'web' ? 'calc(12px + env(safe-area-inset-top))' : 12,
+    paddingBottom: Platform.OS === 'web' ? 'calc(24px + env(safe-area-inset-bottom))' : 24,
   },
   sign: {
     backgroundColor: '#FBF3E1',
