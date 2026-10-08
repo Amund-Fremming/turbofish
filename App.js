@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Platform, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { RedRisingPage } from './src/red-rising/RedRisingPage';
 import { matchPolicy, PrivacyPolicyPage } from './src/privacy-policy/renderer';
 
 export default function App() {
   const [showRedRising, setShowRedRising] = useState(false);
+  const { width, height } = useWindowDimensions();
+  const horseWidth = Math.min(width * 0.55, Math.max(0, (height - 260) * (339 / 736)));
 
   if (Platform.OS === 'web') {
     const policy = matchPolicy(window.location.pathname);
@@ -21,24 +23,30 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.sign}>
-        <Text style={styles.title}>Hold your horses</Text>
-        <Text style={styles.subtitle}>building in prosess</Text>
-      </View>
-      <Image source={require('./assets/horse.webp')} style={styles.horse} resizeMode="contain" />
-      <Pressable
-        onPress={() => {
-          if (Platform.OS === 'web') {
-            window.location.assign('/red-rising');
-            return;
-          }
-          setShowRedRising(true);
-        }}
-        accessibilityRole="link"
-        style={styles.redRisingLink}
-      >
-        <Text style={styles.redRisingLinkText}>Explore the Red Rising character index</Text>
-      </Pressable>
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.sign}>
+          <Text style={styles.title}>Hold your horses</Text>
+          <Text style={styles.subtitle}>building in prosess</Text>
+        </View>
+        <Image
+          source={require('./assets/horse.webp')}
+          style={{ width: horseWidth, height: horseWidth * (736 / 339) }}
+          resizeMode="contain"
+        />
+        <Pressable
+          onPress={() => {
+            if (Platform.OS === 'web') {
+              window.location.assign('/red-rising');
+              return;
+            }
+            setShowRedRising(true);
+          }}
+          accessibilityRole="link"
+          style={styles.redRisingLink}
+        >
+          <Text style={styles.redRisingLinkText}>Explore the Red Rising character index</Text>
+        </Pressable>
+      </ScrollView>
       <StatusBar style="dark" />
     </View>
   );
@@ -48,9 +56,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F0E6D2',
+  },
+  content: {
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 24,
   },
   sign: {
     backgroundColor: '#FBF3E1',
@@ -75,10 +88,6 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     textAlign: 'center',
     marginTop: 4,
-  },
-  horse: {
-    width: '65%',
-    aspectRatio: 339 / 736,
   },
   redRisingLink: {
     paddingVertical: 12,
