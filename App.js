@@ -1,14 +1,23 @@
 import { StatusBar } from 'expo-status-bar';
-import { Image, Platform, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { RedRisingPage } from './src/red-rising/RedRisingPage';
 import { matchPolicy, PrivacyPolicyPage } from './src/privacy-policy/renderer';
 
 export default function App() {
+  const [showRedRising, setShowRedRising] = useState(false);
+
   if (Platform.OS === 'web') {
     const policy = matchPolicy(window.location.pathname);
     if (policy) {
       return <PrivacyPolicyPage policy={policy} />;
     }
+    if (window.location.pathname.replace(/\/+$/, '') === '/red-rising') {
+      return <RedRisingPage />;
+    }
   }
+
+  if (showRedRising) return <RedRisingPage />;
 
   return (
     <View style={styles.container}>
@@ -17,6 +26,19 @@ export default function App() {
         <Text style={styles.subtitle}>building in prosess</Text>
       </View>
       <Image source={require('./assets/horse.webp')} style={styles.horse} resizeMode="contain" />
+      <Pressable
+        onPress={() => {
+          if (Platform.OS === 'web') {
+            window.location.assign('/red-rising');
+            return;
+          }
+          setShowRedRising(true);
+        }}
+        accessibilityRole="link"
+        style={styles.redRisingLink}
+      >
+        <Text style={styles.redRisingLinkText}>Explore the Red Rising character index</Text>
+      </Pressable>
       <StatusBar style="dark" />
     </View>
   );
@@ -57,5 +79,16 @@ const styles = StyleSheet.create({
   horse: {
     width: '65%',
     aspectRatio: 339 / 736,
+  },
+  redRisingLink: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginTop: 8,
+  },
+  redRisingLinkText: {
+    color: '#8E1B25',
+    fontSize: 15,
+    fontWeight: '700',
+    textDecorationLine: 'underline',
   },
 });

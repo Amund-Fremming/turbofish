@@ -7,7 +7,17 @@ const PALETTE = {
   dark: { text: '#EFE6D6', muted: '#B9AC96', link: '#7AB4FF' },
 };
 
-function InlineTokens({ tokens, theme }: { tokens: Tokens.Generic[]; theme: ThemeName }) {
+function InlineTokens({
+  tokens,
+  theme,
+  onLinkPress,
+  linkColor,
+}: {
+  tokens: Tokens.Generic[];
+  theme: ThemeName;
+  onLinkPress?: (href: string) => boolean;
+  linkColor?: string;
+}) {
   const colors = PALETTE[theme];
   return (
     <>
@@ -36,10 +46,17 @@ function InlineTokens({ tokens, theme }: { tokens: Tokens.Generic[]; theme: Them
             return (
               <Text
                 key={index}
-                style={{ color: colors.link, textDecorationLine: 'underline' }}
-                onPress={() => Linking.openURL(link.href)}
+                style={{ color: linkColor ?? colors.link, textDecorationLine: 'underline' }}
+                onPress={() => {
+                  if (!onLinkPress?.(link.href)) Linking.openURL(link.href);
+                }}
               >
-                <InlineTokens tokens={link.tokens ?? []} theme={theme} />
+                <InlineTokens
+                  tokens={link.tokens ?? []}
+                  theme={theme}
+                  onLinkPress={onLinkPress}
+                  linkColor={linkColor}
+                />
               </Text>
             );
           }
@@ -50,7 +67,15 @@ function InlineTokens({ tokens, theme }: { tokens: Tokens.Generic[]; theme: Them
             // that itself carries nested tokens — recurse into those when present.
             const generic = token as Tokens.Text;
             if (generic.tokens) {
-              return <InlineTokens key={index} tokens={generic.tokens} theme={theme} />;
+              return (
+                <InlineTokens
+                  key={index}
+                  tokens={generic.tokens}
+                  theme={theme}
+                  onLinkPress={onLinkPress}
+                  linkColor={linkColor}
+                />
+              );
             }
             return <Text key={index}>{generic.raw}</Text>;
           }
@@ -60,7 +85,17 @@ function InlineTokens({ tokens, theme }: { tokens: Tokens.Generic[]; theme: Them
   );
 }
 
-function Block({ token, theme }: { token: Token; theme: ThemeName }) {
+function Block({
+  token,
+  theme,
+  onLinkPress,
+  linkColor,
+}: {
+  token: Token;
+  theme: ThemeName;
+  onLinkPress?: (href: string) => boolean;
+  linkColor?: string;
+}) {
   const colors = PALETTE[theme];
 
   switch (token.type) {
@@ -77,7 +112,12 @@ function Block({ token, theme }: { token: Token; theme: ThemeName }) {
             marginBottom: 8,
           }}
         >
-          <InlineTokens tokens={heading.tokens} theme={theme} />
+          <InlineTokens
+            tokens={heading.tokens}
+            theme={theme}
+            onLinkPress={onLinkPress}
+            linkColor={linkColor}
+          />
         </Text>
       );
     }
@@ -85,7 +125,12 @@ function Block({ token, theme }: { token: Token; theme: ThemeName }) {
       const paragraph = token as Tokens.Paragraph;
       return (
         <Text style={{ color: colors.text, fontSize: 15, lineHeight: 22, marginBottom: 12 }}>
-          <InlineTokens tokens={paragraph.tokens} theme={theme} />
+          <InlineTokens
+            tokens={paragraph.tokens}
+            theme={theme}
+            onLinkPress={onLinkPress}
+            linkColor={linkColor}
+          />
         </Text>
       );
     }
@@ -99,7 +144,12 @@ function Block({ token, theme }: { token: Token; theme: ThemeName }) {
                 {list.ordered ? `${Number(list.start) + index}.` : '•'}
               </Text>
               <Text style={{ color: colors.text, fontSize: 15, lineHeight: 22, flex: 1 }}>
-                <InlineTokens tokens={item.tokens} theme={theme} />
+                <InlineTokens
+                  tokens={item.tokens}
+                  theme={theme}
+                  onLinkPress={onLinkPress}
+                  linkColor={linkColor}
+                />
               </Text>
             </View>
           ))}
@@ -119,12 +169,28 @@ function Block({ token, theme }: { token: Token; theme: ThemeName }) {
   }
 }
 
-export function Markdown({ source, theme }: { source: string; theme: ThemeName }) {
+export function Markdown({
+  source,
+  theme,
+  onLinkPress,
+  linkColor,
+}: {
+  source: string;
+  theme: ThemeName;
+  onLinkPress?: (href: string) => boolean;
+  linkColor?: string;
+}) {
   const tokens = marked.lexer(source);
   return (
     <>
       {tokens.map((token, index) => (
-        <Block key={index} token={token} theme={theme} />
+        <Block
+          key={index}
+          token={token}
+          theme={theme}
+          onLinkPress={onLinkPress}
+          linkColor={linkColor}
+        />
       ))}
     </>
   );
