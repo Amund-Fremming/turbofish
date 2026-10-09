@@ -16,27 +16,28 @@ import { Markdown } from '../privacy-policy/Markdown';
 import { useTheme } from '../privacy-policy/useTheme';
 import { useDocumentBackground } from '../useDocumentBackground';
 
-const PORTRAITS: Record<string, { name: string; image: ImageSourcePropType }> = {
-  adrius: { name: 'Adrius au Augustus', image: require('../../assets/red-rising/adrius_au_augustus.webp') },
-  nero: { name: 'Nero au Augustus', image: require('../../assets/red-rising/nero_au_augustus.webp') },
-  virginia: { name: 'Virginia au Augustus', image: require('../../assets/red-rising/virginia_au_augustus.jpg') },
-  cassius: { name: 'Cassius au Bellona', image: require('../../assets/red-rising/cassius_au_bellona.jpg') },
-  fitchner: { name: 'Fitchner au Barca', image: require('../../assets/red-rising/fitchner_au_barca.webp') },
-  sevro: { name: 'Sevro au Barca', image: require('../../assets/red-rising/sevro_au_barca.webp') },
-  aja: { name: 'Aja au Grimmus', image: require('../../assets/red-rising/aja_au_grimmus.webp') },
-  victra: { name: 'Victra au Julii', image: require('../../assets/red-rising/vicra_au_julii.webp') },
-  octavia: { name: 'Octavia au Lune', image: require('../../assets/red-rising/octavia_au_lune.webp') },
-  lorn: { name: 'Lorn au Arcos', image: require('../../assets/red-rising/lorn_au_arcos.webp') },
-  roque: { name: 'Roque au Fabii', image: require('../../assets/red-rising/roque_au_fabii.webp') },
-  daxo: { name: 'Daxo au Telemanus', image: require('../../assets/red-rising/daxo_au_telemanus.webp') },
-  kavax: { name: 'Kavax au Telemanus', image: require('../../assets/red-rising/kavax_au_telemanus.webp') },
-  tactus: { name: 'Tactus au Valii', image: require('../../assets/red-rising/tactus_au_valii-rath.webp') },
-  ragnar: { name: 'Ragnar Volarus', image: require('../../assets/red-rising/ragnar_volarus.webp') },
-  sefi: { name: 'Sefi Volarus', image: require('../../assets/red-rising/sefi_volarus.webp') },
-  darrow: { name: 'Darrow of Lykos', image: require('../../assets/red-rising/darrow_lykos.webp') },
-  eo: { name: 'Eo of Lykos', image: require('../../assets/red-rising/eo_au_lykos.jpg') },
-  harmony: { name: 'Harmony', image: require('../../assets/red-rising/harmony.jpg') },
-  quicksilver: { name: 'Quicksilver', image: require('../../assets/red-rising/quicksilver.webp') },
+const PORTRAITS: Record<string, { name: string; images: ImageSourcePropType[] }> = {
+  adrius: { name: 'Adrius au Augustus', images: [require('../../assets/red-rising/adrius_au_augustus.webp')] },
+  nero: { name: 'Nero au Augustus', images: [require('../../assets/red-rising/nero_au_augustus.webp')] },
+  virginia: { name: 'Virginia au Augustus', images: [require('../../assets/red-rising/virginia_au_augustus.jpg')] },
+  cassius: { name: 'Cassius au Bellona', images: [require('../../assets/red-rising/cassius_au_bellona.jpg')] },
+  fitchner: { name: 'Fitchner au Barca', images: [require('../../assets/red-rising/fitchner_au_barca.webp')] },
+  sevro: { name: 'Sevro au Barca', images: [require('../../assets/red-rising/sevro_au_barca.webp')] },
+  aja: { name: 'Aja au Grimmus', images: [require('../../assets/red-rising/aja_au_grimmus.webp')] },
+  victra: { name: 'Victra au Julii', images: [require('../../assets/red-rising/vicra_au_julii.webp')] },
+  octavia: { name: 'Octavia au Lune', images: [require('../../assets/red-rising/octavia_au_lune.webp')] },
+  lorn: { name: 'Lorn au Arcos', images: [require('../../assets/red-rising/lorn_au_arcos.webp')] },
+  roque: { name: 'Roque au Fabii', images: [require('../../assets/red-rising/roque_au_fabii.webp')] },
+  daxo: { name: 'Daxo au Telemanus', images: [require('../../assets/red-rising/daxo_au_telemanus.webp')] },
+  kavax: { name: 'Kavax au Telemanus', images: [require('../../assets/red-rising/kavax_au_telemanus.webp')] },
+  tactus: { name: 'Tactus au Valii', images: [require('../../assets/red-rising/tactus_au_valii-rath.webp')] },
+  romulus: { name: 'Romulus au Raa', images: [require('../../assets/red-rising/romulus_au_raa.jpg')] },
+  ragnar: { name: 'Ragnar Volarus', images: [require('../../assets/red-rising/ragnar_volarus.webp')] },
+  sefi: { name: 'Sefi Volarus', images: [require('../../assets/red-rising/sefi_volarus.webp')] },
+  darrow: { name: 'Darrow of Lykos', images: [require('../../assets/red-rising/darrow_lykos.webp'), require('../../assets/red-rising/darrow_lykos.jpg')] },
+  eo: { name: 'Eo of Lykos', images: [require('../../assets/red-rising/eo_au_lykos.jpg')] },
+  harmony: { name: 'Harmony', images: [require('../../assets/red-rising/harmony.jpg')] },
+  quicksilver: { name: 'Quicksilver', images: [require('../../assets/red-rising/quicksilver.webp')] },
 };
 
 const PALETTE = {
@@ -108,14 +109,17 @@ export function RedRisingPage() {
                 <Text style={{ color: colors.text, fontSize: 13, fontWeight: '600' }}>Close</Text>
               </Pressable>
             </View>
-            {selectedPortrait && (
-              <Image
-                source={selectedPortrait.image}
-                resizeMode="contain"
-                style={[styles.portrait, { height: imageHeight }]}
-                accessibilityLabel={selectedPortrait.name}
-              />
-            )}
+            <View style={styles.portraitRow}>
+              {selectedPortrait?.images.map((image, index) => (
+                <Image
+                  key={index}
+                  source={image}
+                  resizeMode="contain"
+                  style={[styles.portrait, { height: imageHeight }]}
+                  accessibilityLabel={selectedPortrait.name}
+                />
+              ))}
+            </View>
           </View>
         </View>
       </Modal>
@@ -152,5 +156,6 @@ const styles = StyleSheet.create({
   modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   modalTitle: { flex: 1, fontSize: 18, fontWeight: '700', marginRight: 12 },
   closeButton: { borderWidth: 1, borderRadius: 4, paddingVertical: 6, paddingHorizontal: 12 },
-  portrait: { width: '100%' },
+  portraitRow: { flexDirection: 'row', gap: 8 },
+  portrait: { flex: 1 },
 });

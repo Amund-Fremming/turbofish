@@ -34,6 +34,9 @@
 ## House Valii
 - [Tactus au Valii](character:tactus)
 
+## House Raa
+- [Romulus au Raa](character:romulus)
+
 ## House Volarus
 - [Ragnar Volarus](character:ragnar)
 - [Sefi Volarus](character:sefi)
